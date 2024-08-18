@@ -1,0 +1,7 @@
+.git/
+zarf/k8s
+/zarf/docker
+app/frontends/
+.reding/
+makefile
+readme.md

@@ -67,6 +67,30 @@ dev-status:
 	kubectl get svc -o wide
 	kubectl get pods -o wide --watch --all-namespaces
 
+#kubectl get nodes: This command lists all the nodes in the Kubernetes cluster.
+#-o wide: This option provides additional information in the output, including internal/external IP addresses, OS image, kernel version, and container runtime version of each node.
+#kubectl get svc: This command lists all services in the Kubernetes cluster.
+#-o wide: This option provides additional information about the services, such as the cluster IP, external IP (if applicable), and the node port mapping.
+#kubectl get pods: This command lists all pods in the Kubernetes cluster.
+#-o wide: This option provides extra details about the pods, such as their node assignment (i.e., which node the pod is running on) and IP address.
+#--watch: This flag makes the command continuously monitor the pods' status and updates the output whenever the status changes in real-time.
+#--all-namespaces: This flag ensures that pods from all namespaces (not just the default namespace) are shown in the output.
+
+
+# ==============================================================================
+# Building containers
+
+all: service
+
+service:
+	docker build \
+		-f zarf/docker/dockerfile.service \
+		-t $(SERVICE_IMAGE) \
+		--build-arg BUILD_REF=$(VERSION) \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		.
+
+
 # ==============================================================================
 # Modules support
 
