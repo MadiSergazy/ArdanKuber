@@ -72,6 +72,38 @@ dev-apply:
 #The command starts by reading the kustomization.yaml file located in zarf/k8s/dev/sales
 #The resources section in kustomization.yaml typically points to a set of base Kubernetes manifests.
 #In your case, it likely includes resources from ../../base/sales/, which would be the base configuration for the sales service
+#kubectl apply -f -:
+#This applies the YAML manifest to the Kubernetes cluster. The -f - means "apply from standard input," where the input is the manifest coming from kustomize build
+#kubectl wait pods:
+#This command waits for the pods in the specified namespace to be in a Ready state before proceeding.
+#--namespace=$(NAMESPACE):
+#Specifies the namespace where the pods are located
+#--selector app=$(APP):
+#This selects the pods that have a specific label, app=$(APP), where $(APP) would be substituted with the actual app label (in this case, sales
+#-timeout=120s:
+#
+#Sets a timeout of 120 seconds. If the pods do not reach the Ready condition within this time, the command will fail.
+#--for=condition=Ready:
+#
+#Specifies that the command should wait until the pods are in the Ready condition, meaning they are up, running, and ready to serve traffic.
+
+
+#kustomize build zarf/k8s/dev/sales first includes the resources from the base YAML in zarf/k8s/base/sales/base-sales.yaml.
+#Overlay: Then, Kustomize applies the changes from the dev-sales-patch-deploy.yaml, which may include modifications like changing network policies, replicas, image versions, etc.
+
+
+dev-restart:
+	kubectl rollout restart deployment $(APP) --namespace=$(NAMESPACE)
+
+#every time we just only changes code we use this
+#all - rebuild
+#dev-load - load new image
+#dev-restart - restart pod
+dev-update: all dev-load dev-restart
+
+#for any yaml changes
+dev-update-apply: all dev-load dev-apply
+
 
 # ------------------------------------------------------------------------------
 dev-logs:
